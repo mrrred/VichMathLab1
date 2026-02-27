@@ -107,13 +107,43 @@ namespace Program
 
         }
 
+        public static void SimpleIterationMethod(Func<decimal, decimal> phi, decimal epsilon, decimal leftRange, decimal rightRange)
+        {
+            List<decimal> results = new List<decimal>();
+            decimal xn = leftRange + (rightRange - leftRange) / 2;
+            decimal xnplusone = phi(xn);
+            results.Add(xn);
+            results.Add(xnplusone);
+            while (Math.Abs(xnplusone - xn) >= epsilon)
+            {
+                xn = xnplusone;
+                xnplusone = phi(xnplusone);
+                results.Add(xnplusone);
+            }
+            Console.WriteLine("Метод простых итераций");
+            Console.WriteLine("Промежуточные результаты:");
+            int i = 0;
+            foreach (decimal x in results)
+            {
+                Console.WriteLine($"x{i}: {x}");
+                i++;
+            }
+            Console.WriteLine($"Результат: {xnplusone}");
+        }
+
         public static void Main()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             Half_Delenie((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
 
             Console.WriteLine("\n\n\n");
 
             NutonMethod((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
+
+            Console.WriteLine("\n\n\n");
+
+            SimpleIterationMethod((x) => (DecimalEx.Pow(2, x) + 10) / (5 * x), 0.0001m, 1, 2); // преобразовали исх. ур., выразив х, получили фи(х)
         }
     }
 }
