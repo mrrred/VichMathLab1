@@ -107,26 +107,54 @@ namespace Program
 
         }
 
-        public static void SimpleIterationMethod(Func<decimal, decimal> phi, decimal epsilon, decimal leftRange, decimal rightRange)
+        public static decimal SecondDerivative(Func<decimal, decimal> func, decimal x, decimal epsilon)
         {
+            return (Derivative(func, x + epsilon, epsilon) - Derivative(func, x - epsilon, epsilon)) / (2 * epsilon);
+        }
+
+        public static void SimpleIterationMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
+        {
+            decimal h = (rightRange - leftRange) / 20;
+            decimal maxDerivative = 0;
+            decimal derivativeSign = 0;
+            List<decimal> criticalPoints = new List<decimal> { leftRange, rightRange };
+            for (int i = 1; i < 20; i++)
+            {
+                decimal x = leftRange + i * h;
+                decimal secondDer = SecondDerivative(func, x, epsilon);
+                decimal secondDerNext = SecondDerivative(func, x + h, epsilon);
+                if (secondDer * secondDerNext < 0) criticalPoints.Add(x);
+            }
+
+            foreach (decimal x in criticalPoints)
+            {
+                decimal derivative = Derivative(func, x, epsilon);
+                decimal absDer = Math.Abs(derivative);
+                if (absDer > maxDerivative)
+                {
+                    maxDerivative = absDer;
+                    derivativeSign = (derivative > 0) ? 1 : -1;
+                }
+            }
+            decimal lambda = -derivativeSign / maxDerivative;
             List<decimal> results = new List<decimal>();
             decimal xn = leftRange + (rightRange - leftRange) / 2;
-            decimal xnplusone = phi(xn);
+            decimal xnplusone = xn + lambda * func(xn);
             results.Add(xn);
             results.Add(xnplusone);
             while (Math.Abs(xnplusone - xn) >= epsilon)
             {
                 xn = xnplusone;
-                xnplusone = phi(xnplusone);
+                xnplusone = xn + lambda * func(xn);
                 results.Add(xnplusone);
             }
-            Console.WriteLine("Метод простых итераций");
+
             Console.WriteLine("Промежуточные результаты:");
-            int i = 0;
+            int idx = 0;
             foreach (decimal x in results)
             {
-                Console.WriteLine($"x{i}: {x}");
-                i++;
+                Console.WriteLine($"x{idx}: {x}");
+                idx++;
             }
             Console.WriteLine($"Результат: {xnplusone}");
         }
@@ -143,7 +171,7 @@ namespace Program
 
             Console.WriteLine("\n\n\n");
 
-            SimpleIterationMethod((x) => (DecimalEx.Pow(2, x) + 10) / (5 * x), 0.0001m, 1, 2); // преобразовали исх. ур., выразив х, получили фи(х)
+            SimpleIterationMethod((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
         }
     }
 }
