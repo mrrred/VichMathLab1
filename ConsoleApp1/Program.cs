@@ -145,18 +145,66 @@ namespace Program
             Console.WriteLine($"Результат: {xnplusone}");
         }
 
+        public static void Menu()
+        {
+            while (true)
+            {
+                Console.WriteLine("Выберите метод для решения:");
+                Console.WriteLine("1.Метод половинного деления");
+                Console.WriteLine("2.Метод Ньютона");
+                Console.WriteLine("3.Метод простых итераций");
+                Console.WriteLine("Иной ввод - каждый метод последовательно");
+                Console.WriteLine("q - выход");
+                Console.Write("Ваш выбор: ");
+
+                string methodChoice = Console.ReadLine();
+
+                if (methodChoice?.ToLower() == "q") break;
+
+                Console.Write("\nВведите точность (Enter - по умолчанию 0.0001): ");
+                string epsilonInput = Console.ReadLine() ?? "";
+                decimal epsilon = string.IsNullOrWhiteSpace(epsilonInput) ? 0.0001m : decimal.Parse(epsilonInput);
+
+                Console.Write("Введите левую границу интервала (Enter - по умолчанию 1): ");
+                string leftInput = Console.ReadLine() ?? "";
+                decimal leftBound = string.IsNullOrWhiteSpace(leftInput) ? 1m : decimal.Parse(leftInput);
+
+                Console.Write("Введите правую границу интервала (Enter - по умолчанию 2): ");
+                string rightInput = Console.ReadLine() ?? "";
+                decimal rightBound = string.IsNullOrWhiteSpace(rightInput) ? 2m : decimal.Parse(rightInput);
+
+                Func<decimal, decimal> func = x => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10;
+                Console.WriteLine($"\nПараметры: точность = {epsilon}, [a, b] = [{leftBound}, {rightBound}]\n");
+                switch (methodChoice)
+                {
+                    case "1":
+                        BisectionMethod(func, epsilon, leftBound, rightBound);
+                        break;
+                    case "2":
+                        NutonMethod(func, epsilon, leftBound, rightBound);
+                        break;
+                    case "3":
+                        SimpleIterationMethod(func, epsilon, leftBound, rightBound);
+                        break;
+                    default:
+                        BisectionMethod(func, epsilon, leftBound, rightBound);
+                        Console.WriteLine("\n\n\n");
+                        NutonMethod(func, epsilon, leftBound, rightBound);
+                        Console.WriteLine("\n\n\n");
+                        SimpleIterationMethod(func, epsilon, leftBound, rightBound);
+                        break;
+                }
+                Console.Write("Нажмите Enter для возврата в меню или введите q для выхода: ");
+                string continueChoice = Console.ReadLine();
+
+                if (continueChoice?.ToLower() == "q") break;
+            }
+        }
+
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            decimal epsilon = 0.0001m;
-            decimal left_bound = 1;
-            decimal right_bound = 2;
-            Func<decimal, decimal> initial_func = x => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10;
-            BisectionMethod(initial_func, epsilon, left_bound, right_bound);
-            Console.WriteLine("\n\n\n");
-            NutonMethod(initial_func, epsilon, left_bound, right_bound);
-            Console.WriteLine("\n\n\n");
-            SimpleIterationMethod(initial_func, epsilon, left_bound, right_bound);
+            Menu();
         }
     }
 }
