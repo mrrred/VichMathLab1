@@ -6,8 +6,13 @@ namespace Program
 {
     class Prog
     {
+        public static decimal Derivative(Func<decimal, decimal> func, decimal x, decimal epsilon)
+        {
+            return (func(x + epsilon) - func(x - epsilon)) / (2 * epsilon);
+        }
 
-        public static void Half_Delenie(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
+        // Метод половинного деления
+        public static void BisectionMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
         {
             List<decimal> result = new List<decimal>();
 
@@ -34,32 +39,21 @@ namespace Program
             }
 
             Console.WriteLine("Метод половинного деления");
-
             Console.WriteLine("Промежуточные результаты:");
-
             int i = 1;
-
             foreach (decimal x in result)
             {
                 Console.WriteLine($"{i}: {x}");
                 i++;
             }
-
             Console.WriteLine($"Результат: {middle}");
-            
         }
 
-        public static decimal Derivative(Func<decimal, decimal> func, decimal x, decimal epsilon)
-        {
-            return (func(x + epsilon) - func(x - epsilon)) / (2 * epsilon);
-        }
-
+        // Метод Ньютона 
         public static void NutonMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
         {
             List<decimal> results = new List<decimal>();
-
             decimal xn;
-
             if (func(leftRange) < 0)
             {
                 xn = rightRange;
@@ -72,13 +66,9 @@ namespace Program
             {
                 throw new ArgumentException();
             }
-
             results.Add(xn);
-
             decimal xnplusone = xn - (func(xn) / Derivative(func, xn, epsilon));
-
             results.Add(xnplusone);
-
             while (Math.Abs(xn - xnplusone) >= epsilon)
             {
                 decimal buffer = xnplusone;
@@ -89,19 +79,14 @@ namespace Program
 
                 results.Add(xnplusone);
             }
-
             Console.WriteLine("Метод Ньютона");
-
             Console.WriteLine("Промежуточные результаты:");
-
             int i = 0;
-
             foreach (decimal x in results)
             {
                 Console.WriteLine($"x{i}: {x}");
                 i++;
             }
-
             Console.WriteLine($"Результат: {xnplusone}");
 
 
@@ -112,6 +97,7 @@ namespace Program
             return (Derivative(func, x + epsilon, epsilon) - Derivative(func, x - epsilon, epsilon)) / (2 * epsilon);
         }
 
+        // Метод простых итераций
         public static void SimpleIterationMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
         {
             decimal h = (rightRange - leftRange) / 20;
@@ -148,7 +134,7 @@ namespace Program
                 xnplusone = xn + lambda * func(xn);
                 results.Add(xnplusone);
             }
-
+            Console.WriteLine("Метод простых итераций");
             Console.WriteLine("Промежуточные результаты:");
             int idx = 0;
             foreach (decimal x in results)
@@ -162,16 +148,15 @@ namespace Program
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            Half_Delenie((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
-
+            decimal epsilon = 0.0001m;
+            decimal left_bound = 1;
+            decimal right_bound = 2;
+            Func<decimal, decimal> initial_func = x => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10;
+            BisectionMethod(initial_func, epsilon, left_bound, right_bound);
             Console.WriteLine("\n\n\n");
-
-            NutonMethod((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
-
+            NutonMethod(initial_func, epsilon, left_bound, right_bound);
             Console.WriteLine("\n\n\n");
-
-            SimpleIterationMethod((x) => DecimalEx.Pow(2, x) - 5 * DecimalEx.Pow(x, 2) + 10, 0.0001m, 1, 2);
+            SimpleIterationMethod(initial_func, epsilon, left_bound, right_bound);
         }
     }
 }
