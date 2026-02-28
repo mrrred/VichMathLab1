@@ -116,6 +116,40 @@ namespace Program
             return (Derivative(func, x + epsilon, epsilon) - Derivative(func, x - epsilon, epsilon)) / (2 * epsilon);
         }
 
+        public static void SimpleIteration2(Func<decimal, decimal> phi, decimal epsilon, decimal leftRange, decimal rightRange)
+        {
+            List<decimal> results = new List<decimal>();
+            decimal xn = leftRange + (rightRange - leftRange) / 2;
+            decimal xnplusone = phi(xn);
+            results.Add(xn);
+            results.Add(xnplusone);
+            while (Math.Abs(xnplusone - xn) >= epsilon)
+            {
+                xn = xnplusone;
+                xnplusone = phi(xnplusone);
+                results.Add(xnplusone);
+            }
+            Console.WriteLine("Метод простых итераций через аналитически определенные эквивалентные функции");
+            Console.WriteLine("Промежуточные результаты:");
+            int idx = 0;
+            foreach (decimal x in results)
+            {
+                Console.WriteLine($"x{idx}: {x}");
+                idx++;
+            }
+            Console.WriteLine($"Результат: {xnplusone}");
+
+            string time = DateTime.Now.ToString("HHmmss");
+            string filename = $"SimpleIteration2_{time}.txt";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                foreach (decimal x in results)
+                {
+                    writer.WriteLine(x);
+                }
+            }
+        }
+
         // Метод простых итераций
         public static void SimpleIterationMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
         {
@@ -153,7 +187,7 @@ namespace Program
                 xnplusone = xn + lambda * func(xn);
                 results.Add(xnplusone);
             }
-            Console.WriteLine("Метод простых итераций");
+            Console.WriteLine("Метод простых итераций через обобщенный случай эквивалентной функции");
             Console.WriteLine("Промежуточные результаты:");
             int idx = 0;
             foreach (decimal x in results)
@@ -181,7 +215,8 @@ namespace Program
                 Console.WriteLine("Выберите метод для решения:");
                 Console.WriteLine("1.Метод половинного деления");
                 Console.WriteLine("2.Метод Ньютона");
-                Console.WriteLine("3.Метод простых итераций");
+                Console.WriteLine("3.Метод простых итераций через обобщенный случай эквивалентной функции");
+                Console.WriteLine("4.Метод простых итераций через аналитически определенные эквивалентные функции");
                 Console.WriteLine("Иной ввод - каждый метод последовательно");
                 Console.WriteLine("q - выход");
                 Console.Write("Ваш выбор: ");
@@ -214,6 +249,36 @@ namespace Program
                         break;
                     case "3":
                         SimpleIterationMethod(func, epsilon, leftBound, rightBound);
+                        break;
+                    case "4":
+                        Func<decimal, decimal> phi = null;
+                        string phiInfo = "";
+                        if (leftBound == -2 && rightBound == -1)
+                        {
+                            phi = x => -DecimalEx.Sqrt((DecimalEx.Pow(2, x) + 10) / 5);
+                            phiInfo = "fi(x) = -sqrt((2^x + 10) / 5)";
+                            Console.WriteLine($"Эквивалентное преобразование: {phiInfo}\n");
+                            SimpleIteration2(phi, epsilon, leftBound, rightBound);
+                        }
+                        else if (leftBound == 1 && rightBound == 2)
+                        {
+                            phi = x => DecimalEx.Sqrt((DecimalEx.Pow(2, x) + 10) / 5);
+                            phiInfo = "fi(x) = sqrt((2^x + 10) / 5)";
+                            Console.WriteLine($"Эквивалентное преобразование: {phiInfo}\n");
+                            SimpleIteration2(phi, epsilon, leftBound, rightBound);
+                        }
+                        else if (leftBound == 8 && rightBound == 9)
+                        {
+                            phi = x => DecimalEx.Log(5 * DecimalEx.Pow(x, 2) - 10) / DecimalEx.Log(2);
+                            phiInfo = "fi(x) = ln(5x^2 - 10) / ln(2)";
+                            Console.WriteLine($"Эквивалентное преобразование: {phiInfo}\n");
+                            SimpleIteration2(phi, epsilon, leftBound, rightBound);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Заданный интервал не соответствует аналитически определённым начальным приближениям\n");
+                            SimpleIterationMethod(func, epsilon, leftBound, rightBound);
+                        }
                         break;
                     default:
                         BisectionMethod(func, epsilon, leftBound, rightBound);
