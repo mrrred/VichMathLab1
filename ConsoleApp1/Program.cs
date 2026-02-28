@@ -47,6 +47,17 @@ namespace Program
                 i++;
             }
             Console.WriteLine($"Результат: {middle}");
+
+            string time = DateTime.Now.ToString("HHmmss");
+            string filename = $"BisectionMethod_{time}.txt";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                foreach (decimal x in result)
+                {
+                    writer.WriteLine(x);
+                }
+                writer.WriteLine(middle);
+            }
         }
 
         // Метод Ньютона 
@@ -89,7 +100,15 @@ namespace Program
             }
             Console.WriteLine($"Результат: {xnplusone}");
 
-
+            string time = DateTime.Now.ToString("HHmmss");
+            string filename = $"NutonMethod_{time}.txt";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                foreach (decimal x in results)
+                {
+                    writer.WriteLine(x);
+                }
+            }
         }
 
         public static decimal SecondDerivative(Func<decimal, decimal> func, decimal x, decimal epsilon)
@@ -143,6 +162,16 @@ namespace Program
                 idx++;
             }
             Console.WriteLine($"Результат: {xnplusone}");
+
+            string time = DateTime.Now.ToString("HHmmss");
+            string filename = $"SimpleIterationMethod_{time}.txt";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                foreach (decimal x in results)
+                {
+                    writer.WriteLine(x);
+                }
+            }
         }
 
         public static void Menu()
