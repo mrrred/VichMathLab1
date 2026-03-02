@@ -222,7 +222,6 @@ namespace Program
                         Console.WriteLine("\n\n\n");
                         NutonMethod(func, epsilon, leftBound, rightBound);
                         Console.WriteLine("\n\n\n");
-                        SimpleIterationMethod(func, epsilon, leftBound, rightBound);
                         break;
                 }
                 Console.Write("Нажмите Enter для возврата в меню или введите q для выхода: ");
