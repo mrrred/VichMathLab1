@@ -150,64 +150,6 @@ namespace Program
             }
         }
 
-        // Метод простых итераций
-        public static void SimpleIterationMethod(Func<decimal, decimal> func, decimal epsilon, decimal leftRange, decimal rightRange)
-        {
-            decimal h = (rightRange - leftRange) / 20;
-            decimal maxDerivative = 0;
-            decimal derivativeSign = 0;
-            List<decimal> criticalPoints = new List<decimal> { leftRange, rightRange };
-            for (int i = 1; i < 20; i++)
-            {
-                decimal x = leftRange + i * h;
-                decimal secondDer = SecondDerivative(func, x, epsilon);
-                decimal secondDerNext = SecondDerivative(func, x + h, epsilon);
-                if (secondDer * secondDerNext < 0) criticalPoints.Add(x);
-            }
-
-            foreach (decimal x in criticalPoints)
-            {
-                decimal derivative = Derivative(func, x, epsilon);
-                decimal absDer = Math.Abs(derivative);
-                if (absDer > maxDerivative)
-                {
-                    maxDerivative = absDer;
-                    derivativeSign = (derivative > 0) ? 1 : -1;
-                }
-            }
-            decimal lambda = -derivativeSign / maxDerivative;
-            List<decimal> results = new List<decimal>();
-            decimal xn = leftRange + (rightRange - leftRange) / 2;
-            decimal xnplusone = xn + lambda * func(xn);
-            results.Add(xn);
-            results.Add(xnplusone);
-            while (Math.Abs(xnplusone - xn) >= epsilon)
-            {
-                xn = xnplusone;
-                xnplusone = xn + lambda * func(xn);
-                results.Add(xnplusone);
-            }
-            Console.WriteLine("Метод простых итераций через обобщенный случай эквивалентной функции");
-            Console.WriteLine("Промежуточные результаты:");
-            int idx = 0;
-            foreach (decimal x in results)
-            {
-                Console.WriteLine($"x{idx}: {x}");
-                idx++;
-            }
-            Console.WriteLine($"Результат: {xnplusone}");
-
-            string time = DateTime.Now.ToString("HHmmss");
-            string filename = $"SimpleIterationMethod_{time}.txt";
-            using (StreamWriter writer = new StreamWriter(filename))
-            {
-                foreach (decimal x in results)
-                {
-                    writer.WriteLine(x);
-                }
-            }
-        }
-
         public static void Menu()
         {
             while (true)
@@ -215,8 +157,7 @@ namespace Program
                 Console.WriteLine("Выберите метод для решения:");
                 Console.WriteLine("1.Метод половинного деления");
                 Console.WriteLine("2.Метод Ньютона");
-                Console.WriteLine("3.Метод простых итераций через обобщенный случай эквивалентной функции");
-                Console.WriteLine("4.Метод простых итераций через аналитически определенные эквивалентные функции");
+                Console.WriteLine("3.Метод простых итераций через аналитически определенные эквивалентные функции");
                 Console.WriteLine("Иной ввод - каждый метод последовательно");
                 Console.WriteLine("q - выход");
                 Console.Write("Ваш выбор: ");
@@ -248,9 +189,6 @@ namespace Program
                         NutonMethod(func, epsilon, leftBound, rightBound);
                         break;
                     case "3":
-                        SimpleIterationMethod(func, epsilon, leftBound, rightBound);
-                        break;
-                    case "4":
                         Func<decimal, decimal> phi = null;
                         string phiInfo = "";
                         if (leftBound == -2 && rightBound == -1)
@@ -277,7 +215,6 @@ namespace Program
                         else
                         {
                             Console.WriteLine($"Заданный интервал не соответствует аналитически определённым начальным приближениям\n");
-                            SimpleIterationMethod(func, epsilon, leftBound, rightBound);
                         }
                         break;
                     default:
