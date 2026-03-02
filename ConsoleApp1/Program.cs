@@ -69,7 +69,7 @@ namespace Program
             {
                 xn = rightRange;
             }
-            else if(func(rightRange) < 0)
+            else if (func(rightRange) < 0)
             {
                 xn = leftRange;
             }
@@ -129,7 +129,7 @@ namespace Program
                 xnplusone = phi(xnplusone);
                 results.Add(xnplusone);
             }
-            Console.WriteLine("Метод простых итераций через аналитически определенные эквивалентные функции");
+            Console.WriteLine("Метод простых итераций через аналитически определенные для каждого корня эквивалентные уравнения");
             Console.WriteLine("Промежуточные результаты:");
             int idx = 0;
             foreach (decimal x in results)
@@ -187,7 +187,7 @@ namespace Program
                 xnplusone = xn + lambda * func(xn);
                 results.Add(xnplusone);
             }
-            Console.WriteLine("Метод простых итераций через обобщенный случай эквивалентной функции");
+            Console.WriteLine("Метод простых итераций через универсальный случай преобразования исходного уравнения в эквивалентное");
             Console.WriteLine("Промежуточные результаты:");
             int idx = 0;
             foreach (decimal x in results)
@@ -215,8 +215,8 @@ namespace Program
                 Console.WriteLine("Выберите метод для решения:");
                 Console.WriteLine("1.Метод половинного деления");
                 Console.WriteLine("2.Метод Ньютона");
-                Console.WriteLine("3.Метод простых итераций через обобщенный случай эквивалентной функции");
-                Console.WriteLine("4.Метод простых итераций через аналитически определенные эквивалентные функции");
+                Console.WriteLine("3.Метод простых итераций через универсальный случай преобразования исходного уравнения в эквивалентное");
+                Console.WriteLine("4.Метод простых итераций через аналитически определенные для каждого корня эквивалентные уравнения");
                 Console.WriteLine("Иной ввод - каждый метод последовательно");
                 Console.WriteLine("q - выход");
                 Console.Write("Ваш выбор: ");
